@@ -21,8 +21,9 @@ class ViewController: UIViewController {
     
     // TODO: This looks like a good place to add some data structures.
     //       One data structure is initialized below for reference.
-    var someDataStructure: [String] = [""]
     
+    var args: [String] = ["", "", ""]
+    var second = false;
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,52 +46,153 @@ class ViewController: UIViewController {
     
     // TODO: A method to update your data structure(s) would be nice.
     //       Modify this one or create your own.
-    func updateSomeDataStructure(_ content: String) {
-        print("Update me like one of those PCs")
+    func updateArray(_ content: String, array: [String]) {
+        var array = array
+        array.append(content)
+        print("update text")
     }
     
     // TODO: Ensure that resultLabel gets updated.
     //       Modify this one or create your own.
     func updateResultLabel(_ content: String) {
-        print("Update me like one of those PCs")
+        resultLabel.text = content;
+        print("update result label")
+    }
+    
+    func clearResultLabel() {
+        resultLabel.text = "0";
     }
     
     
     // TODO: A calculate method with no parameters, scary!
     //       Modify this one or create your own.
     func calculate() -> String {
-        return "0"
+        for i in 0 ..< 3 {
+            if (args[0].contains(".") || args[2].contains(".")) {
+                let a = args[0];
+                let b = args[2];
+                let operation = args[1];
+                let result = calculate(a:a, b:b, operation:operation);
+                return String(result);
+            }
+        }
+        let a = Int(args[0])
+        let b = Int(args[2])
+        let operation = args[1]
+        let result = intCalculate(a : a!, b: b!, operation: operation)
+        return String(result);
+        
     }
     
     // TODO: A simple calculate method for integers.
     //       Modify this one or create your own.
     func intCalculate(a: Int, b:Int, operation: String) -> Int {
         print("Calculation requested for \(a) \(operation) \(b)")
-        return 0
+        if (operation == "+"){
+            return a + b
+        }
+        else if (operation == "-") {
+            return a - b
+        }
+        else if (operation == "*") {
+            return a * b
+        }
+        else if (operation == "/") {
+            return a / b
+        }
+        else {
+            return 0
+        }
     }
     
     // TODO: A general calculate method for doubles
     //       Modify this one or create your own.
     func calculate(a: String, b:String, operation: String) -> Double {
         print("Calculation requested for \(a) \(operation) \(b)")
-        return 0.0
+        if (operation == "+") {
+            return Double(a)! + Double(b)!
+        } else if (operation == "-") {
+            return Double(a)! - Double(b)!
+        } else if (operation == "*") {
+            return Double(a)! * Double(b)!
+        } else if (operation == "/") {
+            return Double(a)! / Double(b)!
+        } else{
+            return 0.0
+        }
     }
     
     // REQUIRED: The responder to a number button being pressed.
     func numberPressed(_ sender: CustomButton) {
         guard Int(sender.content) != nil else { return }
         print("The number \(sender.content) was pressed")
+        
+        print(resultLabel.text?.characters.count)
+        if ((resultLabel.text?.characters.count)! < 7) {
+            
+            if (!second) {
+                args[0]+=sender.content;
+                updateResultLabel(args[0])
+            } else {
+                args[2]+=sender.content;
+                updateResultLabel(args[2])
+            }
+    
+        }
         // Fill me in!
     }
     
     // REQUIRED: The responder to an operator button being pressed.
     func operatorPressed(_ sender: CustomButton) {
         // Fill me in!
+        if (sender.content == "C") {
+            print("C pressed")
+            args[0] = "";
+            args[1] = "";
+            args[2] = "";
+            clearResultLabel();
+            second = false;
+        }
+        else if (sender.content == "+/-") {
+            if (!second) {
+                args[0] = String(-1 * Int(args[0])!)
+                updateResultLabel(args[0])
+            } else {
+                args[2] = String(-1 * Int(args[2])!)
+                updateResultLabel(args[2])
+            }
+        }
+        else if (sender.content == "=") {
+            let result = calculate();
+            args[0] = result;
+            args[1] = "";
+            args[2] = "";
+            updateResultLabel(result);
+            second = false;
+        } else {
+//            numArgs += 1;
+            //args[numArgs] = sender.content;
+            //numArgs += 1;
+            if (!second) {
+                second = true;
+            }
+            if (args[1] != "") {
+                let result = calculate();
+                args[0] = result;
+                args[2] = "";
+                updateResultLabel(result);
+                second = true;
+            }
+            args[1] = sender.content;
+        }
     }
     
     // REQUIRED: The responder to a number or operator button being pressed.
     func buttonPressed(_ sender: CustomButton) {
        // Fill me in!
+        print(sender.content)
+       // handle 0 and .
+        
     }
     
     // IMPORTANT: Do NOT change any of the code below.
